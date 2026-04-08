@@ -1,0 +1,41 @@
+GUIDE STM32 MINIMAL - NUCLEO F446RE
+
+OBJECTIF
+Envoyer des mesures serie via UART, et recevoir la commande SET_RATE:x.
+
+CONFIGURATION CUBEIDE (resume)
+1. Activer USART2 (ou UART utilisee) en Asynchronous.
+2. Baudrate = 115200, 8N1.
+3. Rediriger printf vers UART (retarget _write).
+4. Activer reception interrupt ou DMA pour parser les commandes texte.
+
+EXEMPLE D EMISSION PERIODIQUE
+printf("T_BODY:%.1f\n", t_body);
+printf("HR:%d\n", hr);
+printf("MOVE:%d\n", move);
+printf("T_AMB:%.1f\n", t_amb);
+printf("HUM:%d\n", hum);
+printf("CRY:%d\n", cry);
+printf("FIRE:%d\n", fire);
+
+FREQUENCE D EMISSION
+- Variable globale: tx_rate_hz (defaut 2)
+- Periode ms = 1000 / tx_rate_hz
+
+PARSER COMMANDE (idee)
+- Buffer de reception jusqu a '\n'
+- Si prefixe "SET_RATE:" alors convertir x
+- Clamp x entre 1 et 10
+- Mettre a jour tx_rate_hz
+
+PSEUDO-CODE
+if (starts_with(line, "SET_RATE:")) {
+  int x = atoi(line + 9);
+  if (x < 1) x = 1;
+  if (x > 10) x = 10;
+  tx_rate_hz = x;
+}
+
+RECOMMANDATION
+- Toujours envoyer des lignes courtes et simples.
+- Garder des cles fixes pour simplifier le parsing cote web.

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Protection Bebe - Dashboard Serie USB</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Protection Bebe</p>
+        <h1>Dashboard Local Reseau</h1>
+      </div>
+      <div class="actions">
+        <button id="refreshPortsBtn" class="btn btn-muted">Rafraichir Ports</button>
+        <button id="connectBtn" class="btn">Connecter STM32</button>
+        <button id="disconnectBtn" class="btn btn-muted" disabled>Deconnecter</button>
+      </div>
+    </header>
+
+    <section class="status-row">
+      <article class="pill">
+        <span class="pill-label">Port STM32</span>
+        <select id="portSelect"></select>
+      </article>
+      <article class="pill">
+        <span class="pill-label">Etat</span>
+        <strong id="portStatus">Non connecte</strong>
+      </article>
+      <article class="pill alarm" id="alarmPill" data-state="safe">
+        <span class="pill-label">Alerte</span>
+        <strong id="alarmStatus">SAFE</strong>
+      </article>
+      <article class="pill control full-span">
+        <label for="rateRange">Frequence (Hz)</label>
+        <input id="rateRange" type="range" min="1" max="10" step="1" value="2" disabled>
+        <div class="control-footer">
+          <span id="rateValue">2 Hz</span>
+          <button id="sendRateBtn" class="btn btn-small" disabled>Envoyer</button>
+        </div>
+      </article>
+    </section>
+
+    <section class="grid">
+      <article class="card"><p>Temperature corporelle</p><h2 id="T_BODY">--.- <small>C</small></h2></article>
+      <article class="card"><p>Frequence cardiaque</p><h2 id="HR">--- <small>bpm</small></h2></article>
+      <article class="card"><p>Mouvement</p><h2 id="MOVE">-</h2></article>
+      <article class="card"><p>Temperature ambiante</p><h2 id="T_AMB">--.- <small>C</small></h2></article>
+      <article class="card"><p>Humidite</p><h2 id="HUM">-- <small>%</small></h2></article>
+      <article class="card"><p>Pleurs</p><h2 id="CRY">-</h2></article>
+      <article class="card"><p>Incendie</p><h2 id="FIRE">-</h2></article>
+    </section>
+
+    <section class="log-box">
+      <div class="log-header">
+        <h3>Flux serie</h3>
+        <button id="clearLogBtn" class="btn btn-muted btn-small">Effacer</button>
+      </div>
+      <pre id="serialLog"></pre>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

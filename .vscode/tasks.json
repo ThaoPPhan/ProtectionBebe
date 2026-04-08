@@ -1,0 +1,19 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run local dashboard server",
+			"type": "shell",
+			"command": "python3",
+			"args": [
+				"bridge_server.py",
+				"--host",
+				"0.0.0.0",
+				"--port",
+				"5500"
+			],
+			"isBackground": true,
+			"group": "build"
+		}
+	]
+}

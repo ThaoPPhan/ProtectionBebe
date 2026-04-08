@@ -1,0 +1,33 @@
+PROTOCOL TEXT SIMPLE - STM32 <-> DASHBOARD
+
+1) Flux STM32 -> WEB
+- Une ligne = une mesure
+- Forme: CLE:VALEUR\n
+CLES SUPPORTES:
+- T_BODY (temperature corporelle en C)
+- HR (frequence cardiaque en bpm)
+- MOVE (0 ou 1)
+- T_AMB (temperature ambiante en C)
+- HUM (humidite en %)
+- CRY (0 ou 1)
+- FIRE (0 ou 1)
+
+EXEMPLE:
+T_BODY:36.8
+HR:142
+MOVE:1
+T_AMB:27.1
+HUM:58
+CRY:0
+FIRE:0
+
+2) Flux WEB -> STM32
+- Une commande par ligne
+
+COMMANDES:
+- SET_RATE:x   (x = 1..10 Hz)
+- ALARM_ACK:1
+
+EXEMPLE:
+SET_RATE:5
+ALARM_ACK:1
