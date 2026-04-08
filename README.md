@@ -41,6 +41,9 @@ http://IP_DE_TON_PC:5500
 3. Cliquer `Connecter STM32`.
 4. Verifier que les valeurs se mettent a jour.
 5. Ajuster la frequence avec le slider, puis cliquer `Envoyer`.
+6. Utiliser `Heart Rate`:
+	- `Lire maintenant` envoie `GET_HR`
+	- `Mode continu` ON/OFF envoie `HR_STREAM:1` ou `HR_STREAM:0`
 
 ## Format serie attendu
 Une donnee par ligne:
@@ -59,6 +62,8 @@ FIRE:0
 ```txt
 SET_RATE:2
 ALARM_ACK:1
+GET_HR
+HR_STREAM:1
 ```
 
 `SET_RATE:x` = frequence d emission en Hz (1 a 10).

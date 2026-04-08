@@ -141,6 +141,23 @@ h1 {
   align-items: center;
 }
 
+.hr-control {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.hr-actions {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+#hrControlStatus {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

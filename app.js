@@ -1,6 +1,7 @@
 const state = {
   connected: false,
   selectedPort: "",
+  hrStreamOn: false,
   data: {
     T_BODY: null,
     HR: null,
@@ -27,6 +28,9 @@ const ui = {
   rateRange: document.getElementById("rateRange"),
   rateValue: document.getElementById("rateValue"),
   sendRateBtn: document.getElementById("sendRateBtn"),
+  readHrBtn: document.getElementById("readHrBtn"),
+  toggleHrStreamBtn: document.getElementById("toggleHrStreamBtn"),
+  hrControlStatus: document.getElementById("hrControlStatus"),
 };
 
 const metricIds = ["T_BODY", "HR", "MOVE", "T_AMB", "HUM", "CRY", "FIRE"];
@@ -40,7 +44,19 @@ function setConnectionUi(connected) {
   ui.refreshPortsBtn.disabled = connected;
   ui.rateRange.disabled = !connected;
   ui.sendRateBtn.disabled = !connected;
+  ui.readHrBtn.disabled = !connected;
+  ui.toggleHrStreamBtn.disabled = !connected;
   ui.portStatus.textContent = connected ? "Connecte" : "Non connecte";
+
+  if (!connected) {
+    state.hrStreamOn = false;
+    syncHrControlUi();
+  }
+}
+
+function syncHrControlUi() {
+  ui.toggleHrStreamBtn.textContent = state.hrStreamOn ? "Mode continu: ON" : "Mode continu: OFF";
+  ui.hrControlStatus.textContent = state.hrStreamOn ? "Lecture continue active" : "Inactif";
 }
 
 function updateMetricUI() {
@@ -222,6 +238,26 @@ async function sendCommand(command) {
   }
 }
 
+async function readHeartRateOnce() {
+  try {
+    await sendCommand("GET_HR");
+    ui.hrControlStatus.textContent = "Demande HR envoyee";
+  } catch (error) {
+    alert(`Erreur heart rate: ${error.message}`);
+  }
+}
+
+async function toggleHeartRateStream() {
+  const nextState = !state.hrStreamOn;
+  try {
+    await sendCommand(`HR_STREAM:${nextState ? 1 : 0}`);
+    state.hrStreamOn = nextState;
+    syncHrControlUi();
+  } catch (error) {
+    alert(`Erreur mode heart rate: ${error.message}`);
+  }
+}
+
 ui.connectBtn.addEventListener("click", async () => {
   await connectSerial();
 });
@@ -257,7 +293,16 @@ ui.sendRateBtn.addEventListener("click", async () => {
   }
 });
 
+ui.readHrBtn.addEventListener("click", async () => {
+  await readHeartRateOnce();
+});
+
+ui.toggleHrStreamBtn.addEventListener("click", async () => {
+  await toggleHeartRateStream();
+});
+
 setConnectionUi(false);
+syncHrControlUi();
 refreshPorts();
 pollState();
 setInterval(pollState, 350);
