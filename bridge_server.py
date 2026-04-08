@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import threading
 import time
 from collections import deque
@@ -19,6 +20,42 @@ from serial.tools import list_ports
 
 ROOT = Path(__file__).resolve().parent
 METRIC_KEYS = ["T_BODY", "HR", "MOVE", "T_AMB", "HUM", "CRY", "FIRE"]
+KEY_ALIASES = {
+    "T_BODY": "T_BODY",
+    "TBODY": "T_BODY",
+    "TEMP": "T_BODY",
+    "TEMP_BODY": "T_BODY",
+    "TEMPCORPS": "T_BODY",
+    "BODYTEMP": "T_BODY",
+    "BODYT": "T_BODY",
+    "HR": "HR",
+    "HEARTRATE": "HR",
+    "HEART_RATE": "HR",
+    "BPM": "HR",
+    "PULSE": "HR",
+    "MOVE": "MOVE",
+    "MOVEMENT": "MOVE",
+    "MOTION": "MOVE",
+    "MVT": "MOVE",
+    "PIR": "MOVE",
+    "FINGER": "MOVE",
+    "T_AMB": "T_AMB",
+    "TAMB": "T_AMB",
+    "AMBT": "T_AMB",
+    "TEMP_AMB": "T_AMB",
+    "AMB_TEMP": "T_AMB",
+    "AMBIENTTEMP": "T_AMB",
+    "HUM": "HUM",
+    "HUMID": "HUM",
+    "HUMIDITY": "HUM",
+    "HUMIDITE": "HUM",
+    "CRY": "CRY",
+    "CRYING": "CRY",
+    "PLEUR": "CRY",
+    "FIRE": "FIRE",
+    "INCENDIE": "FIRE",
+    "FLAME": "FIRE",
+}
 
 
 class SharedState:
@@ -117,13 +154,41 @@ class SerialBridge:
                 time.sleep(0.3)
 
     def _parse_metric_locked(self, line: str) -> None:
-        if ":" not in line:
-            return
-        key, value = line.split(":", 1)
-        key = key.strip()
-        value = value.strip()
-        if key in METRIC_KEYS:
-            self.state.metrics[key] = value
+        # Accept flexible payloads: "HR:142", "Temp=36.7", "HR:142 T_AMB:25.1".
+        chunks = re.findall(r"([A-Za-z_]+)\s*[:=]\s*([^,;|\s]+)", line)
+        if not chunks and (":" in line or "=" in line):
+            # Fallback for odd lines with spaces in values.
+            sep = ":" if ":" in line else "="
+            raw_key, raw_value = line.split(sep, 1)
+            chunks = [(raw_key, raw_value)]
+
+        for raw_key, raw_value in chunks:
+            canonical = self._canonical_key(raw_key)
+            if not canonical:
+                continue
+            self.state.metrics[canonical] = self._normalize_value(canonical, raw_value)
+
+    def _canonical_key(self, key: str) -> Optional[str]:
+        cleaned = re.sub(r"[^A-Za-z0-9_]", "", key).upper()
+        return KEY_ALIASES.get(cleaned)
+
+    def _normalize_value(self, metric_key: str, raw_value: str) -> str:
+        value = raw_value.strip()
+
+        if metric_key in {"MOVE", "CRY", "FIRE"}:
+            flag = value.upper()
+            if flag in {"1", "ON", "TRUE", "YES", "OUI"}:
+                return "1"
+            if flag in {"0", "OFF", "FALSE", "NO", "NON"}:
+                return "0"
+
+            number = re.search(r"[-+]?\d+", value)
+            if number:
+                return "1" if int(number.group(0)) != 0 else "0"
+            return value
+
+        number = re.search(r"[-+]?\d+(?:\.\d+)?", value)
+        return number.group(0) if number else value
 
     def _log_locked(self, message: str) -> None:
         ts = time.strftime("%H:%M:%S")
