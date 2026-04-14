@@ -218,6 +218,73 @@ h1 {
   line-height: 1.45;
 }
 
+/* ── Responsive mobile ─────────────────────────────────────── */
+@media (max-width: 700px) {
+  .app-shell {
+    width: 96vw;
+    margin: 1rem auto;
+  }
+
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .actions {
+    width: 100%;
+  }
+
+  .actions .btn {
+    flex: 1 1 auto;
+    text-align: center;
+    padding: 0.75rem 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .status-row {
+    grid-template-columns: 1fr;
+  }
+
+  .full-span {
+    grid-column: 1;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .card {
+    min-height: 90px;
+    padding: 0.85rem;
+  }
+
+  .card h2 {
+    font-size: clamp(1.3rem, 6vw, 1.7rem);
+  }
+
+  .hr-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .hr-actions .btn {
+    width: 100%;
+    text-align: center;
+    padding: 0.7rem;
+  }
+
+  #serialLog {
+    font-size: 0.72rem;
+    max-height: 150px;
+  }
+}
+
+@media (max-width: 400px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 900px) {
   .status-row {
     grid-template-columns: 1fr;

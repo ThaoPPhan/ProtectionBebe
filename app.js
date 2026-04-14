@@ -10,6 +10,7 @@ const state = {
     HUM: null,
     CRY: 0,
     FIRE: 0,
+    IR: null,
   },
   logs: [],
   lastRenderedLogs: "",
@@ -33,7 +34,7 @@ const ui = {
   hrControlStatus: document.getElementById("hrControlStatus"),
 };
 
-const metricIds = ["T_BODY", "HR", "MOVE", "T_AMB", "HUM", "CRY", "FIRE"];
+const metricIds = ["T_BODY", "HR", "MOVE", "T_AMB", "HUM", "CRY", "FIRE", "IR"];
 
 let audioContext = null;
 
@@ -68,8 +69,15 @@ function updateMetricUI() {
     }
     if (id === "MOVE" || id === "CRY" || id === "FIRE") {
       el.textContent = Number(value) === 1 ? "OUI" : "NON";
+    } else if (id === "HR") {
+      el.innerHTML = `${value} <small>bpm</small>`;
+    } else if (id === "IR") {
+      // Capteur 18-bit (MAX30102) : valeur brute max = 262143
+      const IR_MAX = 262143;
+      const pct = Math.min(100, Math.round((Number(value) / IR_MAX) * 100));
+      el.innerHTML = `${pct} <small>%</small>`;
     } else {
-      el.innerHTML = id === "HR" ? `${value} <small>bpm</small>` : `${value}`;
+      el.textContent = value;
     }
   }
 }

@@ -19,7 +19,7 @@ from serial.tools import list_ports
 
 
 ROOT = Path(__file__).resolve().parent
-METRIC_KEYS = ["T_BODY", "HR", "MOVE", "T_AMB", "HUM", "CRY", "FIRE"]
+METRIC_KEYS = ["T_BODY", "HR", "MOVE", "T_AMB", "HUM", "CRY", "FIRE", "IR"]
 KEY_ALIASES = {
     "T_BODY": "T_BODY",
     "TBODY": "T_BODY",
@@ -55,6 +55,11 @@ KEY_ALIASES = {
     "FIRE": "FIRE",
     "INCENDIE": "FIRE",
     "FLAME": "FIRE",
+    "IR": "IR",
+    "INFRARED": "IR",
+    "SPO2": "IR",
+    "SPO": "IR",
+    "OXYGEN": "IR",
 }
 
 
