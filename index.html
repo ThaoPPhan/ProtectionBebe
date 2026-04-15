@@ -6,7 +6,8 @@
   <title>Protection Bebe - Dashboard Serie USB</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;600&display=swap">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;600&display=swap"></noscript>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -20,6 +21,7 @@
         <button id="refreshPortsBtn" class="btn btn-muted">Rafraichir Ports</button>
         <button id="connectBtn" class="btn">Connecter STM32</button>
         <button id="disconnectBtn" class="btn btn-muted" disabled>Deconnecter</button>
+        <button id="simulateBtn" class="btn btn-muted">Simuler</button>
       </div>
     </header>
 
@@ -27,6 +29,8 @@
       <article class="pill">
         <span class="pill-label">Port STM32</span>
         <select id="portSelect"></select>
+        <input id="portManual" type="text" placeholder="ex: COM5" style="margin-top:6px;padding:4px 8px;font-size:0.85rem;width:100%;box-sizing:border-box;" />
+        <small style="color:var(--muted,#888)">Saisir manuellement si absent de la liste</small>
       </article>
       <article class="pill">
         <span class="pill-label">Etat</span>

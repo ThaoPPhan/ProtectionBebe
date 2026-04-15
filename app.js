@@ -20,6 +20,8 @@ const ui = {
   connectBtn: document.getElementById("connectBtn"),
   disconnectBtn: document.getElementById("disconnectBtn"),
   refreshPortsBtn: document.getElementById("refreshPortsBtn"),
+  simulateBtn: document.getElementById("simulateBtn"),
+  portManual: document.getElementById("portManual"),
   portSelect: document.getElementById("portSelect"),
   portStatus: document.getElementById("portStatus"),
   alarmPill: document.getElementById("alarmPill"),
@@ -71,6 +73,8 @@ function updateMetricUI() {
       el.textContent = Number(value) === 1 ? "OUI" : "NON";
     } else if (id === "HR") {
       el.innerHTML = `${value} <small>bpm</small>`;
+    } else if (id === "HUM") {
+      el.innerHTML = `${value} <small>%</small>`;
     } else if (id === "IR") {
       // Capteur 18-bit (MAX30102) : valeur brute max = 262143
       const IR_MAX = 262143;
@@ -174,9 +178,10 @@ async function refreshPorts() {
 }
 
 async function connectSerial() {
-  const port = ui.portSelect.value;
+  const manual = ui.portManual ? ui.portManual.value.trim() : "";
+  const port = manual || ui.portSelect.value;
   if (!port) {
-    alert("Selectionne un port d abord.");
+    alert("Selectionne un port ou saisis-le manuellement.");
     return;
   }
 
@@ -307,6 +312,19 @@ ui.readHrBtn.addEventListener("click", async () => {
 
 ui.toggleHrStreamBtn.addEventListener("click", async () => {
   await toggleHeartRateStream();
+});
+
+async function simulate() {
+  try {
+    const response = await fetch("/api/simulate", { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
+    if (!response.ok) throw new Error("Simulation echouee");
+  } catch (error) {
+    alert(`Erreur simulation: ${error.message}`);
+  }
+}
+
+ui.simulateBtn.addEventListener("click", async () => {
+  await simulate();
 });
 
 setConnectionUi(false);

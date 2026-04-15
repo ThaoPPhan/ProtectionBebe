@@ -195,6 +195,23 @@ class SerialBridge:
         number = re.search(r"[-+]?\d+(?:\.\d+)?", value)
         return number.group(0) if number else value
 
+    def simulate(self) -> None:
+        fake_lines = [
+            "T_BODY:36.8",
+            "HR:142",
+            "MOVE:0",
+            "T_AMB:22.5",
+            "HUM:55",
+            "CRY:0",
+            "FIRE:0",
+            "IR:180000",
+        ]
+        with self.state.lock:
+            for line in fake_lines:
+                self._parse_metric_locked(line)
+            self._log_locked("--- SIMULATION injectee ---")
+            self.state.updated_at = time.time()
+
     def _log_locked(self, message: str) -> None:
         ts = time.strftime("%H:%M:%S")
         self.state.logs.append(f"[{ts}] {message}")
@@ -285,6 +302,11 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 if not command:
                     raise ValueError("Command is required")
                 self.bridge.send_command(command)
+                self._json({"ok": True})
+                return
+
+            if self.path == "/api/simulate":
+                self.bridge.simulate()
                 self._json({"ok": True})
                 return
 
